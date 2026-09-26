@@ -1,0 +1,18 @@
+# Design Log — Project 2
+
+(500–800 words total. See spec §5 for what each section must cover.)
+
+## Growth factor and amortized cost
+
+So with the growth factor, the conversation starts empty with no array or memory allocated for it. As a message comes into the array, the capacity is increased to one. As more and more messages come into the system, the capacity doubles each time the array fills. However, to grow the array it means the code must allocate a larger array, copy over all the existing messages, and then deleting the old array. Doubling it every time the array fills avoids the issue of reallocating and copying over all messages on each append, which would cost a lot of resources to do compared to just doubling each time the array is filled. The memory saved and the increased speed of doubling every time it is filled has a cost of unused memory but the more expensive reallocations are spread across the appends. 
+Across n appends, inserting new messages required n assignments. But when the array grows, the numbers of existing messages copied grows from 1,2,4,8,16 and so on. Assuming this goes on forever this sequence would sum to less than 2n copies. Combined with the new messages being appended it gives less than 3n assignments. On average per append though gives 3n/n=3 which is a constant number of assignments per append so it has an amortized O(1) cost.
+
+## Rule of Five evidence
+My Conversation class runs and controls a dynamically allocated array, so it needs all the class constructor functions to manage that memory correctly. The destructor uses delete[] to free the memory associated with the array/ The copy constructor allocates memory for a new array to copy messages into it so the copy and original conversations do not share ownership despite containing the same info. Copy assignment does the same but it frees the copier's former array before it can be given the new data. Both of the operations use a smart pointer to prevent a memory leak. The move constructor transfers the data within the conversation to the new conversation without copying the data. Sets the source's data to nullptr or 0 so it contains no info. Assignment does the same thing but frees the destination's array's array from memory. Test 3 and 4 are meant to verify this.
+
+## Sentinel scanner: bounded pending_ proof
+The scanner uses pending_ to store characters that have potential to become a complete match when more input arrives. If a character comes in and continues to match the sentinel characters it is appended to the end of the pending_ string. If it doesn't the scanner clears the string to use as safe text. If a character doesn't match it will release characters from the front of the string to use as safe text, until the remaining characters can be a potential match for the sentinel. It starts empty and after each processed character it should only contain a potential match for sentinel. If a full match is detected, the pending string is fully cleared instead of released/stored as safe text. A nonempty sentinel of length m will always be  at most m-1 characters.
+Test 9 is meant to verify this.
+
+## What I would change differently
+If I did this project again I would progress through the project by doing the tests as I implement the code, while also drawing out a flow map for the code. A flow map would be a thousand times better as it allows for preparation and more efficient and intentional design when coding.
