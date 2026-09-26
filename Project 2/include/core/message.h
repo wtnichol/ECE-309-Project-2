@@ -1,16 +1,23 @@
+#pragma once
 #include <string>
 
-enum class Role { System, User, Assistant };
+enum class Role
+{
+    System,
+    User,
+    Assistant
+};
 
-class Message {
+class Message
+{
 public:
     Message(); // Required to initialize empty array slots
     Message(Role role, std::string content);
 
-    Role               role()    const noexcept;
-    const std::string& content() const noexcept;
+    Role role() const noexcept;
+    const std::string &content() const noexcept;
 
 private:
-    Role        role_;
+    Role role_;
     std::string content_;
 };
